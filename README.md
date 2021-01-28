@@ -54,7 +54,7 @@ for Example:
 Notes:
 Requires Modnix 2.5.5 or higher
 
-
+Tested on GOG version, with Modnix 2.5.5+
 
 Thanks:
 mad234269 - for leting me use few parts of his code and for his great mod AssortedAdjustments(log function mod was awesome help :-) )
