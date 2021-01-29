@@ -60,7 +60,7 @@
     <Compile Include="SelectClassTraits.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Support.cs" />
-    <Compile Include="TraitSetting.cs" />
+    <Compile Include="Definitions.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ChangeLog.md" />
