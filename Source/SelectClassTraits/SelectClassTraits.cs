@@ -1,6 +1,11 @@
-﻿using Harmony;
+﻿using Base.Core;
+using Base.Defs;
+using Harmony;
+using PhoenixPoint.Tactical.Entities.Abilities;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 
 namespace SelectClassTraits

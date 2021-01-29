@@ -1,33 +1,39 @@
 ﻿using Base;
+using Base.Core;
+using Base.Defs;
+using Base.Entities.Abilities;
 using PhoenixPoint.Common.Entities;
 using PhoenixPoint.Common.Entities.Characters;
+using PhoenixPoint.Tactical.Entities;
 using PhoenixPoint.Tactical.Entities.Abilities;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SelectClassTraits
 {
-    public static class AbilityGen
+    internal static class AbilityGen
     {
-        public static Dictionary<int, TacticalAbilityDef> GeneratePersonalTraits(int abilitiesCount, LevelProgressionDef levelDef, List<TacticalAbilityDef> personalAbilityPool, SpecializationDef specBCT)
+        internal static Dictionary<int, TacticalAbilityDef> GeneratePersonalTraits(int abilitiesCount, LevelProgressionDef levelDef, SpecializationDef soldierSpec, DefRepository defRepo)
         {
             try
             {
                 //Logger.Debug($"[FactionCharacterGenerator_GeneratePersonalAbilities_POSTFIX] Generating SKILLLZ!");
                 //Logger.Info($"Specialization for soldier is: {specBCT.ViewElementDef.DisplayName1.LocalizeEnglish()}");
 
-                Dictionary<int, TacticalAbilityDef> dictionary = new Dictionary<int, TacticalAbilityDef>();
+                Dictionary<int, TacticalAbilityDef> dictionary = new Dictionary<int, TacticalAbilityDef>(); //dictionary to return
                 List<TacticalAbilityDef> tmpList = new List<TacticalAbilityDef>();
-                int maxLevel = levelDef.MaxLevel;
-                List<int> availableSlots = new List<int>();
-                for (int i = 0; i < maxLevel; i++)
+                List<int> availableSlots = new List<int>(); //slots to fill with skills
+
+                for (int i = 0; i < levelDef.MaxLevel; i++)
                 {
                     availableSlots.Add(i);
                 }
 
-                //List<TraitSetting> skills = Support.SkillsByClass(specBCT.name);
 
-                (List<TacticalAbilityDef> PersonalAb, List<TacticalAbilityDef> TempList) = Support.SelectPersonalList(personalAbilityPool, Support.SkillsByClass(specBCT.name), abilitiesCount);
+
+                List<TacticalAbilityDef> personalAbilityPool = new List<TacticalAbilityDef>(); //just temp
+                (List<TacticalAbilityDef> PersonalAb, List<TacticalAbilityDef> TempList) = Support.SelectPersonalList(personalAbilityPool, Support.SkillsByClass(soldierSpec.name), abilitiesCount);
 
                 if (PersonalAb != null || TempList != null)
                 {
@@ -38,7 +44,7 @@ namespace SelectClassTraits
                 {
                     Logger.Debug($"no skills returned from SelecPersonalList!!!!");
                 }
-
+                
                 int num = 0;
                 while (num < abilitiesCount && personalAbilityPool.Count != 0)
                 {
@@ -62,9 +68,9 @@ namespace SelectClassTraits
                     {
                         throw new NullReferenceException("Personal ability pool returned no TacticalAbilityDef");
                     }
+                    
                 }
                 personalAbilityPool.AddRange(tmpList);
-
 
 
                 return dictionary;

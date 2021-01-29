@@ -1,4 +1,5 @@
 ﻿using Base;
+using Base.Defs;
 using PhoenixPoint.Common.Entities;
 using PhoenixPoint.Common.Entities.GameTagsTypes;
 using PhoenixPoint.Tactical.Entities.Abilities;
@@ -11,13 +12,93 @@ namespace SelectClassTraits
     class Support
     {
         //FactionCharacterGenerator Method used by GenerateUnit
-        public static SpecializationDef GetSpecializationByClassTag(ClassTagDef classTag, List<SpecializationDef> SpecializationsDefs)
+        internal static SpecializationDef GetSpecializationByClassTag(ClassTagDef classTag, List<SpecializationDef> SpecializationsDefs)
         {
             return SpecializationsDefs.FirstOrDefault((SpecializationDef t) => t.ClassTag == classTag);
         }
 
+        internal static List<TacticalAbilityDef> SelectSkills(string soldierSpec, DefRepository defRep)
+        {
+            List<TacticalAbilityDef> skillList = new List<TacticalAbilityDef>();
+
+            try
+            {
+                IDictionary<string, int> skills = GetClassDictionary(soldierSpec);
+                List<TacticalAbilityDef> allAbilities = defRep.GetAllDefs<TacticalAbilityDef>().ToList();
+                List<TacticalAbilityDef> viewEAbilities = (from p in defRep.GetAllDefs<TacticalAbilityDef>()
+                                                           where p.ViewElementDef != null
+                                                           select p).ToList();
+
+
+                foreach (var sk in skills)
+                {
+                    if (sk.Value > 0)
+                    {
+                        bool found = false;
+                        foreach (var aA in allAbilities)
+                        {
+                            if (aA.name == sk.Key)
+                            {
+                                skillList.Add(aA);
+                                found = true;
+                            }
+                        }
+                        if (!found)
+                        {
+                            foreach (var vEA in viewEAbilities)
+                            {
+                                if (vEA.ViewElementDef.DisplayName1.LocalizeEnglish() == sk.Key && !found)
+                                {
+                                    skillList.Add(vEA);
+                                    found = true;
+                                }
+                            }
+                        }
+                        if (!found)
+                        {
+                            Logger.Debug($"Ability: {sk.Value}  was not found in AbilityDef");
+                        }
+                    }
+                }
+            }
+            catch(Exception e)
+            {
+                Logger.Error(e);
+            }
+            return skillList;
+        }
+
+        //get correct Dictionary for class from settings
+        private static IDictionary<string, int> GetClassDictionary(string spec)
+        {
+            IDictionary<string, int> result = new Dictionary<string, int>();
+            string className = null;
+
+            foreach(var gcn in Settings.ClassesDict)
+            {
+                if(gcn.Value.ClassDef == spec)
+                {
+                    className = gcn.Key;
+                }
+            }
+
+            foreach(var sl in new Settings().SettingList)
+            {
+                if(sl.Key == className)
+                {
+                    result = sl.Value;
+                }
+            }
+
+            return result;
+        }
+
+
+
+
+        //old stuff to delete
         //inserts settings to list of objects
-        public static List<TraitSetting> SkillsByClass(string WhatClass)
+        internal static List<TraitSetting> SkillsByClass(string WhatClass)
         {
             int ClassNum = 0;
             bool ClassAllowed = false;
@@ -94,7 +175,7 @@ namespace SelectClassTraits
             return AllowedTraits;
         }
 
-        public static (List<TacticalAbilityDef> PersonalAb, List<TacticalAbilityDef> TempList) SelectPersonalList(List<TacticalAbilityDef> PersonalAbilitiesList, List<TraitSetting> SelectedTraits, int TraitCount)
+        internal static (List<TacticalAbilityDef> PersonalAb, List<TacticalAbilityDef> TempList) SelectPersonalList(List<TacticalAbilityDef> PersonalAbilitiesList, List<TraitSetting> SelectedTraits, int TraitCount)
         {
             try
             {

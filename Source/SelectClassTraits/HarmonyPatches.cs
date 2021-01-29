@@ -1,5 +1,6 @@
 ﻿using Base.Core;
 using Base.Defs;
+using Base.Entities.Abilities;
 using Harmony;
 using PhoenixPoint.Common.Entities;
 using PhoenixPoint.Common.Entities.Characters;
@@ -18,34 +19,31 @@ namespace SelectClassTraits
 {
     class HarmonyPatches
     {
-
 		//Patch for FactionCharacterGenerator, Method: GenerateUnit - Add specialization to method call for GeneratePersonalAbilities
 		[HarmonyPatch(typeof(FactionCharacterGenerator), "GenerateUnit")]
 		public static class GenerateUnit_Patch
 		{
-			public static bool Prefix(ref GeoUnitDescriptor __result, GeoFaction faction, TacCharacterDef template, BaseStatSheetDef ___BaseStatsSheet, List<TacticalAbilityDef> ____personalAbilityPool)
+			public static bool Prefix(ref GeoUnitDescriptor __result, GeoFaction faction, TacCharacterDef template, BaseStatSheetDef ___BaseStatsSheet, DefRepository ____defRepo)
 			{
 				try
 				{
-					DefRepository defRep = GameUtl.GameComponent<DefRepository>();
-
-					List<SpecializationDef> SpecDef = defRep.DefRepositoryDef.AllDefs.OfType<SpecializationDef>().ToList();
-
 					if (template == null)
 					{
 						throw new Exception("Missing template for character");
 					}
+
 					GeoUnitDescriptor geoUnitDescriptor = new GeoUnitDescriptor(faction, new GeoUnitDescriptor.UnitTypeDescriptor(template));
 					GeoUnitDescriptor.ProgressionDescriptor progressionDescriptor = null;
+
 					foreach (ClassTagDef classTag in template.ClassTags)
 					{
-						SpecializationDef specializationByClassTag = Support.GetSpecializationByClassTag(classTag, SpecDef);
+						SpecializationDef specializationByClassTag = Support.GetSpecializationByClassTag(classTag, ____defRepo.GetAllDefs<SpecializationDef>().ToList());
 
 						if (specializationByClassTag != null)
 						{
 							if (progressionDescriptor == null)
 							{
-								Dictionary<int, TacticalAbilityDef> personalAbilitiesByLevel = AbilityGen.GeneratePersonalTraits(___BaseStatsSheet.PersonalAbilitiesCount, template.Data.LevelProgression.Def, ____personalAbilityPool, specializationByClassTag);
+								Dictionary<int, TacticalAbilityDef> personalAbilitiesByLevel = AbilityGen.GeneratePersonalTraits(___BaseStatsSheet.PersonalAbilitiesCount, template.Data.LevelProgression.Def, specializationByClassTag, ____defRepo);
 								progressionDescriptor = new GeoUnitDescriptor.ProgressionDescriptor(specializationByClassTag, personalAbilitiesByLevel);
 							}
 							else
