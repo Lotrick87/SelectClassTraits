@@ -1,27 +1,34 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace SelectClassTraits
 {
     internal class Settings
     {
+        public bool LeaveEmpty = false;
+        public IDictionary<string, IDictionary<string, int>> SettingList = Setup();
+
+        // DebugLevel (0: nothing, 1: error, 2: debug, 3: info)
+        public int Debug = 2;
+
         internal static IDictionary<string, Classes> ClassesDict = new Dictionary<string, Classes>(){
-            { "Assault", new Classes(){ ClassDef = "AssaultSpecializationDef", ClassCount = 1 } },
-            { "Sniper", new Classes(){ ClassDef = "SniperSpecializationDef", ClassCount = 1 } },
-            { "Heavy", new Classes(){ ClassDef = "HeavySpecializationDef", ClassCount = 1 } },
-            { "Infiltrator", new Classes(){ ClassDef = "InfiltratorSpecializationDef", ClassCount = 1 } },
-            { "Technician", new Classes(){ ClassDef = "TechnicianSpecializationDef", ClassCount = 1 } },
-            { "Berserker", new Classes(){ ClassDef = "BerserkerSpecializationDef", ClassCount = 1 } },
-            { "Priest", new Classes(){ ClassDef = "PriestSpecializationDef", ClassCount = 1 } }
+            { "Assault", new Classes(){ ClassDef = "AssaultSpecializationDef", ClassCount = 5 } },
+            { "Sniper", new Classes(){ ClassDef = "SniperSpecializationDef", ClassCount = 5 } },
+            { "Heavy", new Classes(){ ClassDef = "HeavySpecializationDef", ClassCount = 5 } },
+            { "Infiltrator", new Classes(){ ClassDef = "InfiltratorSpecializationDef", ClassCount = 5 } },
+            { "Technician", new Classes(){ ClassDef = "TechnicianSpecializationDef", ClassCount = 5 } },
+            { "Berserker", new Classes(){ ClassDef = "BerserkerSpecializationDef", ClassCount = 5 } },
+            { "Priest", new Classes(){ ClassDef = "PriestSpecializationDef", ClassCount = 5 } }
         };
 
         internal static IDictionary<string, IDictionary<string, int>> Setup()
         {
             IDictionary<string, IDictionary<string, int>> result = new Dictionary<string, IDictionary<string, int>>();
             IDictionary<string, int> defaultSkills = new Dictionary<string, int>() {
+                { "ClassAllowed", 1 },
+                { "ClassStatic", 0 },
                 { "RESOURCEFUL", 1 },
                 { "TROOPER", 2 },
-                { "SNIPERIST", 3 },
+                { "Focused_AbilityDef", 3 },
                 { "RECKLESS", 4 },
                 { "SELF DEFENSE SPECIALIST", 5 },
                 { "HEALER", 6 },
@@ -48,35 +55,6 @@ namespace SelectClassTraits
 
             return result;
         }
-
-        public IDictionary<string, IDictionary<string, int>> SettingList = Setup();
-
-        //old stuff to delete
-        internal bool Assault = true;
-        internal bool Sniper = true;
-        internal bool Heavy = true;
-        internal bool Infiltrator = true;
-        internal bool Technician = true;
-        internal bool Berserker = true;
-        internal bool Priest = true;
-
-        internal bool[] Resourceful = { true, true, true, true, true, true, true };
-        internal bool[] Trooper = { true, true, true, true, true, true, true };
-        internal bool[] Sniperist = { true, true, true, true, true, true, true };
-        internal bool[] Reckless = { true, true, true, true, true, true, true };
-        internal bool[] SelfDefense = { true, true, true, true, true, true, true };
-        internal bool[] Healer = { true, true, true, true, true, true, true };
-        internal bool[] Farsighted = { true, true, true, true, true, true, true };
-        internal bool[] Cautious = { true, true, true, true, true, true, true };
-        internal bool[] Thief = { true, true, true, true, true, true, true };
-        internal bool[] Bombardier = { true, true, true, true, true, true, true };
-        internal bool[] CloseQuarters = { true, true, true, true, true, true, true };
-        internal bool[] Quarterback = { true, true, true, true, true, true, true };
-        internal bool[] Strongman = { true, true, true, true, true, true, true };
-        internal bool[] Biochemist = { true, true, true, true, true, true, true };
-
-        // DebugLevel (0: nothing, 1: error, 2: debug, 3: info)
-        public int Debug = 1;
     }
 
 }

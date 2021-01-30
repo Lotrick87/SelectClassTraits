@@ -65,7 +65,7 @@
   <ItemGroup>
     <EmbeddedResource Include="ChangeLog.md" />
     <None Include="packages.config" />
-    <EmbeddedResource Include="Readme.rtf" />
+    <EmbeddedResource Include="Readme.md" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="mod_info.js" />

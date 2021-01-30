@@ -1,25 +1,20 @@
 ﻿using Base;
-using Base.Core;
 using Base.Defs;
-using Base.Entities.Abilities;
 using PhoenixPoint.Common.Entities;
 using PhoenixPoint.Common.Entities.Characters;
-using PhoenixPoint.Tactical.Entities;
 using PhoenixPoint.Tactical.Entities.Abilities;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace SelectClassTraits
 {
     internal static class AbilityGen
     {
-        internal static Dictionary<int, TacticalAbilityDef> GeneratePersonalTraits(int abilitiesCount, LevelProgressionDef levelDef, SpecializationDef soldierSpec, DefRepository defRepo)
+        internal static Dictionary<int, TacticalAbilityDef> GeneratePersonalTraits(int abilitiesCount, LevelProgressionDef levelDef, SpecializationDef soldierSpec, DefRepository defRepo, List<TacticalAbilityDef> personalAbilityPool)
         {
             try
             {
-                //Logger.Debug($"[FactionCharacterGenerator_GeneratePersonalAbilities_POSTFIX] Generating SKILLLZ!");
-                //Logger.Info($"Specialization for soldier is: {specBCT.ViewElementDef.DisplayName1.LocalizeEnglish()}");
+                Logger.Info($"Specialization for soldier is: {soldierSpec.ViewElementDef.DisplayName1.LocalizeEnglish()}");
 
                 Dictionary<int, TacticalAbilityDef> dictionary = new Dictionary<int, TacticalAbilityDef>(); //dictionary to return
                 List<TacticalAbilityDef> tmpList = new List<TacticalAbilityDef>();
@@ -30,48 +25,75 @@ namespace SelectClassTraits
                     availableSlots.Add(i);
                 }
 
+                (List<TacticalAbilityDef> skills, int classStat) = Support.SelectSkills(soldierSpec.name, defRepo);
 
-
-                List<TacticalAbilityDef> personalAbilityPool = new List<TacticalAbilityDef>(); //just temp
-                (List<TacticalAbilityDef> PersonalAb, List<TacticalAbilityDef> TempList) = Support.SelectPersonalList(personalAbilityPool, Support.SkillsByClass(soldierSpec.name), abilitiesCount);
-
-                if (PersonalAb != null || TempList != null)
+                if (skills.IsEmpty())
                 {
-                    personalAbilityPool = PersonalAb;
-                    tmpList = TempList;
+                    skills = personalAbilityPool;
+                    Logger.Info($"SelectSkills returned no skills!");
                 }
-                else
+
+                if (skills.Count < abilitiesCount && personalAbilityPool.Count > 0 && !SelectClassTraits.Settings.LeaveEmpty) //if not enough skills and LeavyEmpty is not true, fill up from personalanilitypool
                 {
-                    Logger.Debug($"no skills returned from SelecPersonalList!!!!");
-                }
-                
-                int num = 0;
-                while (num < abilitiesCount && personalAbilityPool.Count != 0)
-                {
-                    TacticalAbilityDef randomElement = personalAbilityPool.GetRandomElement();
-                    if (randomElement != null)
+                    List<TacticalAbilityDef> tmpList2 = new List<TacticalAbilityDef>();
+
+                    foreach(var skl in skills) //check if some skills in personalabilitypool already are in skills and remove them
                     {
-                        personalAbilityPool.Remove(randomElement);
-                        tmpList.Add(randomElement);
-                        int slot = availableSlots.GetRandomElement();
-
-                        //Logger.Info($"[FactionCharacterGenerator_GeneratePersonalAbilities_POSTFIX] slot: {slot}");
-                        //Logger.Info($"[FactionCharacterGenerator_GeneratePersonalAbilities_POSTFIX] ability: {randomElement.ViewElementDef.DisplayName1.Localize()}");
-
-                        availableSlots.Remove(slot);
-                        //Logger.Info($"[FactionCharacterGenerator_GeneratePersonalAbilities_POSTFIX] availableSlots: {availableSlots.Count}");
-
-                        dictionary.Add(slot, randomElement);
-                        num++;
+                        if (personalAbilityPool.Contains(skl))
+                        {
+                            tmpList2.Add(skl);
+                            personalAbilityPool.Remove(skl);
+                        }
                     }
-                    else
+
+                    while (skills.Count < abilitiesCount && personalAbilityPool.Count > 0) //fill up with random skills
                     {
-                        throw new NullReferenceException("Personal ability pool returned no TacticalAbilityDef");
+                        TacticalAbilityDef rando = personalAbilityPool.GetRandomElement();
+                        tmpList2.Add(rando);
+                        skills.Add(rando);
+                        personalAbilityPool.Remove(rando);
+                        
                     }
-                    
-                }
-                personalAbilityPool.AddRange(tmpList);
 
+                    personalAbilityPool.AddRange(tmpList2);
+                }
+
+                if(classStat != 1) //if class is not static generate skills randomly
+                {
+                    int num = 0;
+                    while (num < abilitiesCount && skills.Count > 0)
+                    {
+                        TacticalAbilityDef randomElement = skills.GetRandomElement();
+                        if (randomElement != null)
+                        {
+                            skills.Remove(randomElement);
+                            tmpList.Add(randomElement);
+                            int slot = availableSlots.GetRandomElement();
+
+                            Logger.Info($"GeneratePersonalAbilities slot: {slot}   ability: {randomElement.ViewElementDef.DisplayName1.Localize()}");
+
+                            availableSlots.Remove(slot);
+
+                            dictionary.Add(slot, randomElement);
+                            num++;
+                        }
+                        else
+                        {
+                            throw new NullReferenceException("skills list returned no TacticalAbilityDef");
+                        }
+
+                    }
+
+                }
+                else //if static just copy
+                {
+                    Logger.Info("Class is static:");
+                    for(int i = 0; i < skills.Count && i < abilitiesCount; i++)
+                    {
+                        dictionary.Add(availableSlots[i], skills[i]);
+                        Logger.Info($"i: {i}   slot: {availableSlots[i]}   skill: {skills[i].ViewElementDef.DisplayName1.LocalizeEnglish()}");
+                    }
+                }
 
                 return dictionary;
                 

@@ -1,6 +1,4 @@
-﻿using Base.Core;
-using Base.Defs;
-using Base.Entities.Abilities;
+﻿using Base.Defs;
 using Harmony;
 using PhoenixPoint.Common.Entities;
 using PhoenixPoint.Common.Entities.Characters;
@@ -23,7 +21,7 @@ namespace SelectClassTraits
 		[HarmonyPatch(typeof(FactionCharacterGenerator), "GenerateUnit")]
 		public static class GenerateUnit_Patch
 		{
-			public static bool Prefix(ref GeoUnitDescriptor __result, GeoFaction faction, TacCharacterDef template, BaseStatSheetDef ___BaseStatsSheet, DefRepository ____defRepo)
+			public static bool Prefix(ref GeoUnitDescriptor __result, GeoFaction faction, TacCharacterDef template, BaseStatSheetDef ___BaseStatsSheet, DefRepository ____defRepo, List<TacticalAbilityDef> ____personalAbilityPool)
 			{
 				try
 				{
@@ -43,7 +41,7 @@ namespace SelectClassTraits
 						{
 							if (progressionDescriptor == null)
 							{
-								Dictionary<int, TacticalAbilityDef> personalAbilitiesByLevel = AbilityGen.GeneratePersonalTraits(___BaseStatsSheet.PersonalAbilitiesCount, template.Data.LevelProgression.Def, specializationByClassTag, ____defRepo);
+								Dictionary<int, TacticalAbilityDef> personalAbilitiesByLevel = AbilityGen.GeneratePersonalTraits(___BaseStatsSheet.PersonalAbilitiesCount, template.Data.LevelProgression.Def, specializationByClassTag, ____defRepo, ____personalAbilityPool);
 								progressionDescriptor = new GeoUnitDescriptor.ProgressionDescriptor(specializationByClassTag, personalAbilitiesByLevel);
 							}
 							else
