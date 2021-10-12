@@ -18,7 +18,7 @@ namespace SelectClassTraits
     class HarmonyPatches
     {
 		//Patch for FactionCharacterGenerator, Method: GenerateUnit - Add specialization to method call for GeneratePersonalAbilities
-		[HarmonyPatch(typeof(FactionCharacterGenerator), "GenerateUnit")]
+		[HarmonyPatch(typeof(FactionCharacterGenerator), "GenerateUnit", new Type[] { typeof(GeoFaction), typeof(TacCharacterDef) })]
 		public static class GenerateUnit_Patch
 		{
 			public static bool Prefix(ref GeoUnitDescriptor __result, GeoFaction faction, TacCharacterDef template, BaseStatSheetDef ___BaseStatsSheet, DefRepository ____defRepo, List<TacticalAbilityDef> ____personalAbilityPool)

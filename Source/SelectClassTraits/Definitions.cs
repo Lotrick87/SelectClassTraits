@@ -2,7 +2,7 @@
 {
     class Classes
     {
-        internal string ClassDef;
-        internal int ClassCount;
+        public string ClassDef;
+        public int ClassCount;
     }
 }
