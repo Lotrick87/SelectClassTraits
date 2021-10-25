@@ -10,14 +10,15 @@ namespace SelectClassTraits
         // DebugLevel (0: nothing, 1: error, 2: debug, 3: info)
         public int Debug = 2;
 
+        internal static int gennum = 1;
         internal static IDictionary<string, Classes> ClassesDict = new Dictionary<string, Classes>(){
-            { "Assault", new Classes(){ ClassDef = "AssaultSpecializationDef", ClassCount = 3 } },
-            { "Sniper", new Classes(){ ClassDef = "SniperSpecializationDef", ClassCount = 3 } },
-            { "Heavy", new Classes(){ ClassDef = "HeavySpecializationDef", ClassCount = 3 } },
-            { "Infiltrator", new Classes(){ ClassDef = "InfiltratorSpecializationDef", ClassCount = 3 } },
-            { "Technician", new Classes(){ ClassDef = "TechnicianSpecializationDef", ClassCount = 3 } },
-            { "Berserker", new Classes(){ ClassDef = "BerserkerSpecializationDef", ClassCount = 3 } },
-            { "Priest", new Classes(){ ClassDef = "PriestSpecializationDef", ClassCount = 3 } }
+            { "Assault", new Classes(){ ClassDef = "AssaultSpecializationDef", ClassCount = gennum } },
+            { "Sniper", new Classes(){ ClassDef = "SniperSpecializationDef", ClassCount = gennum } },
+            { "Heavy", new Classes(){ ClassDef = "HeavySpecializationDef", ClassCount = gennum } },
+            { "Infiltrator", new Classes(){ ClassDef = "InfiltratorSpecializationDef", ClassCount = gennum } },
+            { "Technician", new Classes(){ ClassDef = "TechnicianSpecializationDef", ClassCount = gennum } },
+            { "Berserker", new Classes(){ ClassDef = "BerserkerSpecializationDef", ClassCount = gennum } },
+            { "Priest", new Classes(){ ClassDef = "PriestSpecializationDef", ClassCount = gennum } }
         };
 
         internal static IDictionary<string, IDictionary<string, int>> Setup()

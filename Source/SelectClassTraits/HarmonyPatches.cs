@@ -41,7 +41,16 @@ namespace SelectClassTraits
 						{
 							if (progressionDescriptor == null)
 							{
-								Dictionary<int, TacticalAbilityDef> personalAbilitiesByLevel = AbilityGen.GeneratePersonalTraits(___BaseStatsSheet.PersonalAbilitiesCount, template.Data.LevelProgression.Def, specializationByClassTag, ____defRepo, ____personalAbilityPool);
+								Dictionary<int, TacticalAbilityDef> personalAbilitiesByLevel;
+
+								if (template.Data.LevelProgression.ShouldGeneratePersonalAbilities)
+								{
+									personalAbilitiesByLevel = AbilityGen.GeneratePersonalTraits(___BaseStatsSheet.PersonalAbilitiesCount, template.Data.LevelProgression.Def, specializationByClassTag, ____defRepo, ____personalAbilityPool);
+								}
+                                else
+                                {
+									personalAbilitiesByLevel = new Dictionary<int, TacticalAbilityDef>();
+                                }
 								progressionDescriptor = new GeoUnitDescriptor.ProgressionDescriptor(specializationByClassTag, personalAbilitiesByLevel);
 							}
 							else

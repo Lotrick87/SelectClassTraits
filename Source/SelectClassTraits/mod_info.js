@@ -1,7 +1,7 @@
 ﻿{
 	Id : "Lotrick.SelectClassTraits",
 	Name : "Select Class Traits",
-    Version: "2.0",
+    Version: "2.2",
 	Description : "Select Soldier Personal Skills",
     Lang: "en",
     Author: "Lotrick87",
